@@ -1,0 +1,29 @@
+{
+  "specVersion": "0.2",
+  "package": {
+    "name": "refund-policy",
+    "version": "1.0.0",
+    "license": "Apache-2.0",
+    "publisher": "example.org"
+  },
+  "skill": {
+    "entrypoint": "SKILL.md",
+    "id": "asxp://example.org/refund-policy"
+  },
+  "permissions": ["orders.read", "refunds.evaluate"],
+  "privacy": "delegated",
+  "origin": {
+    "syncUrl": "https://agents.example.org/skills/refund-policy"
+  },
+  "bindings": [
+    {
+      "type": "mcp",
+      "server": "io.example.orders",
+      "tools": ["lookup_order", "evaluate_refund"]
+    },
+    {
+      "type": "asxp-http",
+      "url": "https://agents.example.org/delegations"
+    }
+  ]
+}

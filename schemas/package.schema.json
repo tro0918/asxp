@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asxp.dev/schema/0.2/package.schema.json",
+  "title": "ASXP Package Manifest",
+  "type": "object",
+  "required": ["specVersion", "package", "skill", "permissions", "bindings"],
+  "properties": {
+    "specVersion": {"const": "0.2"},
+    "package": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"},
+        "license": {"type": "string"},
+        "publisher": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "skill": {
+      "type": "object",
+      "required": ["entrypoint"],
+      "properties": {
+        "entrypoint": {"const": "SKILL.md"},
+        "id": {"type": "string", "format": "uri"}
+      },
+      "additionalProperties": false
+    },
+    "revision": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "permissions": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]*$"},
+      "uniqueItems": true
+    },
+    "privacy": {"enum": ["local", "delegated", "external"]},
+    "origin": {
+      "type": "object",
+      "required": ["syncUrl"],
+      "properties": {
+        "syncUrl": {"type": "string", "format": "uri"}
+      },
+      "additionalProperties": false
+    },
+    "bindings": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/embedded"},
+          {"$ref": "#/$defs/mcp"},
+          {"$ref": "#/$defs/asxpHttp"},
+          {"$ref": "#/$defs/a2a"}
+        ]
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "files": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+      },
+      "additionalProperties": false
+    },
+    "extensions": {"type": "object"}
+  },
+  "$defs": {
+    "embedded": {
+      "type": "object", "required": ["type", "tools"],
+      "properties": {"type": {"const": "embedded"}, "tools": {"type": "array", "items": {"$ref": "tool.schema.json"}}},
+      "additionalProperties": false
+    },
+    "mcp": {
+      "type": "object", "required": ["type", "server"],
+      "properties": {"type": {"const": "mcp"}, "server": {"type": "string"}, "tools": {"type": "array", "items": {"type": "string"}}},
+      "additionalProperties": true
+    },
+    "asxpHttp": {
+      "type": "object", "required": ["type", "url"],
+      "properties": {"type": {"const": "asxp-http"}, "url": {"type": "string", "format": "uri"}},
+      "additionalProperties": true
+    },
+    "a2a": {
+      "type": "object", "required": ["type", "agentCard", "skillId"],
+      "properties": {"type": {"const": "a2a"}, "agentCard": {"type": "string", "format": "uri"}, "skillId": {"type": "string"}},
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

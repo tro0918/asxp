@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ASXP TCK Result",
+  "type": "object",
+  "required": ["profile", "implementation", "platform", "time", "testsRun", "passed", "failures", "errors", "skipped"],
+  "properties": {
+    "profile": {"type": "string"},
+    "implementation": {"type": "string"},
+    "platform": {"type": "string"},
+    "time": {"type": "string", "format": "date-time"},
+    "testsRun": {"type": "integer", "minimum": 1},
+    "passed": {"type": "boolean"},
+    "failures": {"type": "integer", "minimum": 0},
+    "errors": {"type": "integer", "minimum": 0},
+    "skipped": {"type": "integer", "minimum": 0},
+    "knownDeviations": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

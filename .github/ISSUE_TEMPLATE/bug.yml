@@ -1,0 +1,24 @@
+name: Bug report
+description: Report incorrect reference behavior or a conformance failure.
+title: "bug: "
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: {label: ASXP version}
+    validations: {required: true}
+  - type: textarea
+    id: reproduction
+    attributes: {label: Minimal reproduction, description: Include a sanitized package or commands. Never include credentials.}
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes: {label: Expected and actual behavior}
+    validations: {required: true}
+  - type: checkboxes
+    id: security
+    attributes:
+      label: Security check
+      options:
+        - label: This report does not disclose an unpatched vulnerability or secret.
+          required: true

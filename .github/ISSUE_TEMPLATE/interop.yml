@@ -1,0 +1,20 @@
+name: Interoperability report
+description: Share results from another runtime or client.
+title: "interop: "
+labels: [interoperability]
+body:
+  - type: input
+    id: runtime
+    attributes: {label: Runtime and version}
+    validations: {required: true}
+  - type: dropdown
+    id: result
+    attributes: {label: Result, options: [Pass, Partial, Fail]}
+    validations: {required: true}
+  - type: textarea
+    id: matrix
+    attributes: {label: Export/import/verify/diff results}
+    validations: {required: true}
+  - type: textarea
+    id: deviations
+    attributes: {label: Known deviations and conversion loss}

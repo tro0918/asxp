@@ -4,10 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "asxp"
-version = "0.1.0"
-description = "Reference tools for the Agent Skill Exchange Protocol"
+version = "0.2.0"
+description = "Reference tools for the Agent Skill Exchange Profile"
 requires-python = ">=3.10"
 license = {text = "Apache-2.0"}
+readme = "README.md"
+keywords = ["ai-agents", "agent-skills", "interoperability", "mcp"]
 
 [project.scripts]
 asxp = "asxp.cli:main"

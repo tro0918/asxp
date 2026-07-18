@@ -1,3 +1,3 @@
-"""Agent Skill Exchange Protocol reference implementation."""
+"""Agent Skill Exchange Profile reference implementation."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

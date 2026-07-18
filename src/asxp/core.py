@@ -12,6 +12,7 @@ NAME_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$")
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
 TOOL_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_.-]{0,127}$")
 REQUIRED = ("name", "description", "asxp-version", "version", "ae-tools-json")
+AGENT_SKILL_REQUIRED = ("name", "description")
 SECRET_KEYS = ("api-key", "apikey", "access-token", "refresh-token", "client-secret", "password", "cookie", "credential")
 
 
@@ -142,3 +143,39 @@ def validate(skill: Skill) -> list[str]:
 
 def load(path: str | Path) -> Skill:
     return parse(Path(path).read_text(encoding="utf-8"))
+
+
+def parse_agent_skill(text: str) -> Skill:
+    """Parse the portable Agent Skills core without requiring ASXP fields."""
+    if text.startswith("\ufeff"):
+        text = text[1:]
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        raise SkillError("document must start with YAML frontmatter delimiter '---'")
+    end = next((i for i, line in enumerate(lines[1:], 1) if line.strip() == "---"), None)
+    if end is None:
+        raise SkillError("frontmatter closing delimiter is missing")
+    fm: dict[str, str] = {}
+    for number, raw in enumerate(lines[1:end], 2):
+        line = raw.rstrip("\r\n")
+        if not line.strip() or line.lstrip().startswith("#") or line[0].isspace():
+            continue
+        if ":" not in line:
+            raise SkillError(f"frontmatter line {number} is not a key/value")
+        key, value = line.split(":", 1)
+        key, value = key.strip(), value.strip()
+        if not key or key in fm:
+            raise SkillError(f"frontmatter line {number} has an empty or duplicate key")
+        fm[key] = _unquote(value)
+    missing = [key for key in AGENT_SKILL_REQUIRED if not fm.get(key)]
+    if missing:
+        raise SkillError("missing Agent Skills field(s): " + ", ".join(missing))
+    if not NAME_RE.fullmatch(fm["name"]) or "--" in fm["name"]:
+        raise SkillError("Agent Skills name must be lowercase kebab-case")
+    if len(fm["description"]) > 1024:
+        raise SkillError("Agent Skills description exceeds 1024 characters")
+    return Skill(fm, "".join(lines[end + 1 :]), [])
+
+
+def load_agent_skill(path: str | Path) -> Skill:
+    return parse_agent_skill(Path(path).read_text(encoding="utf-8"))
