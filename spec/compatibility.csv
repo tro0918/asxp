@@ -1,0 +1,11 @@
+asxp,skill_md,ai_plugin_json,openapi,loss_note
+name,name,name_for_model,info.title,OpenAPI title is display-oriented
+description,description,description_for_model,info.description,
+instructions,markdown_body,,,Lost in plugin and OpenAPI conversion
+tools,ae-tools-json,api.url,operations,Plugin points to API rather than embedding tools
+origin.url,origin-url,api.url,servers.url,Plugin api.url has different semantics
+permissions,permissions,auth,securitySchemes,Only partial mapping
+privacy,privacy,,,Lost without extension
+revision,revision,,,Lost without extension
+signature,signing-key-id,,,Detached JWS has no direct equivalent
+delegation,delegation-url,,,Lost without extension

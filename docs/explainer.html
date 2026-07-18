@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Agent Skill Exchange Protocol(ASXP) 개념과 동작 방식 설명">
+  <title>ASXP — 에이전트 스킬을 안전하게 교환하는 방법</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f7f8fb;--paper:#fff;--ink:#172033;--muted:#5e687c;--line:#dfe3eb;--accent:#3157d5;--accent2:#12a594;--soft:#eef2ff;--warn:#fff4d6;--danger:#b83a4b;--shadow:0 20px 60px rgba(28,39,75,.10)}
+    @media(prefers-color-scheme:dark){:root{--bg:#0f1420;--paper:#171e2c;--ink:#edf1fa;--muted:#aeb8cc;--line:#30394b;--accent:#86a1ff;--accent2:#51d1bd;--soft:#202b4b;--warn:#3b321c;--danger:#ff91a0;--shadow:none}}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Pretendard,"Noto Sans KR",system-ui,sans-serif;line-height:1.72}a{color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 28px}.hero{padding:88px 0 64px;background:linear-gradient(135deg,var(--soft),transparent 60%)}.eyebrow{color:var(--accent);font-weight:800;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(2.35rem,6vw,5rem);line-height:1.08;letter-spacing:-.055em;margin:.3em 0 .28em;max-width:950px}.lead{font-size:clamp(1.05rem,2vw,1.32rem);color:var(--muted);max-width:800px}.pill{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:999px;margin:20px 8px 0 0;background:var(--paper);font-size:.88rem}.toc{position:sticky;top:0;z-index:3;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(14px);border-block:1px solid var(--line)}.toc .wrap{display:flex;gap:24px;overflow:auto;white-space:nowrap;padding-block:13px}.toc a{text-decoration:none;font-size:.88rem;color:var(--muted)}main{padding:40px 0 100px}section{margin:72px 0}h2{font-size:clamp(1.7rem,3vw,2.5rem);letter-spacing:-.035em;margin:0 0 16px}h3{margin-top:0}.section-lead{max-width:780px;color:var(--muted);font-size:1.06rem}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:26px}.card{grid-column:span 4;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}.card p{color:var(--muted);margin-bottom:0}.num{font-weight:900;color:var(--accent);font-size:1.9rem}.callout{border-left:5px solid var(--accent);background:var(--soft);padding:22px 26px;border-radius:0 16px 16px 0;margin:28px 0}.flow{display:flex;align-items:stretch;gap:12px;margin-top:30px}.step{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}.arrow{align-self:center;color:var(--accent);font-size:1.6rem}.step small{display:block;color:var(--accent);font-weight:800}.step p{color:var(--muted);font-size:.93rem}.runtime{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:30px;margin-top:26px}.lane{display:grid;grid-template-columns:180px 1fr;gap:20px;padding:20px 0;border-bottom:1px solid var(--line)}.lane:last-child{border:0}.lane strong{color:var(--accent)}code{font-family:"SFMono-Regular",Consolas,monospace;background:var(--soft);padding:.15em .4em;border-radius:5px;font-size:.9em}pre{overflow:auto;background:#101827;color:#e9efff;padding:22px;border-radius:14px;font-size:.87rem;line-height:1.55}table{width:100%;border-collapse:separate;border-spacing:0;margin-top:24px;background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden}th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--soft)}tr:last-child td{border-bottom:0}.yes{color:var(--accent2);font-weight:800}.no{color:var(--danger);font-weight:800}.boundary{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}.safe,.unsafe{border-radius:18px;padding:26px;border:1px solid var(--line);background:var(--paper)}.safe{border-top:5px solid var(--accent2)}.unsafe{border-top:5px solid var(--danger)}li{margin:.45em 0}.roadmap{counter-reset:road}.roadmap li{list-style:none;counter-increment:road;display:grid;grid-template-columns:44px 1fr;gap:14px;margin:20px 0}.roadmap li:before{content:counter(road);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--paper);font-weight:900}.footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:.9rem}.tag{font-size:.78rem;color:var(--accent);font-weight:800}.mono{font-family:monospace}.accent{color:var(--accent)}
+    @media(max-width:760px){.hero{padding-top:58px}.card{grid-column:span 12}.flow{flex-direction:column}.arrow{transform:rotate(90deg)}.lane{grid-template-columns:1fr;gap:4px}.boundary{grid-template-columns:1fr}.wrap{padding-inline:20px}table{font-size:.86rem;display:block;overflow:auto}}
+    @media print{.toc{display:none}:root{--bg:#fff;--paper:#fff;--ink:#111;--muted:#444;--line:#ccc;--soft:#f4f5f8}.hero{padding:30px 0}main{padding-bottom:0}section{break-inside:avoid;margin:38px 0}.card{box-shadow:none}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Agent Skill Exchange Protocol · Draft 0.1</div>
+      <h1>에이전트의 능력을<br><span class="accent">파일 하나로 교환한다</span></h1>
+      <p class="lead">ASXP는 에이전트의 재사용 가능한 prompt와 tool 계약을 <code>skill.md</code>로 내보내고, 다른 에이전트가 인라인으로 가져오며, 필요할 때만 원본 에이전트에 위임하도록 정의한 벤더 중립 프로토콜 초안입니다.</p>
+      <span class="pill">File-first</span><span class="pill">Vendor-neutral</span><span class="pill">Secure by default</span><span class="pill">Optional delegation</span>
+    </div>
+  </header>
+  <nav class="toc"><div class="wrap"><a href="#why">왜 필요한가</a><a href="#model">핵심 모델</a><a href="#flow">Import / Export</a><a href="#runtime">런타임</a><a href="#profiles">적합성 프로필</a><a href="#security">보안</a><a href="#adopt">도입 방법</a></div></nav>
+  <main class="wrap">
+    <section id="why">
+      <div class="eyebrow">Problem</div><h2>도구 호출과 능력 이전은 다릅니다</h2>
+      <p class="section-lead">MCP가 에이전트가 외부 도구를 호출하는 공통 인터페이스라면, ASXP는 한 에이전트의 <strong>정의와 실행 능력 자체</strong>를 다른 에이전트가 가져오는 교환 계층입니다.</p>
+      <div class="grid">
+        <article class="card"><div class="num">01</div><h3>정의의 이식</h3><p>재사용 가능한 prompt와 도구 입력·출력 계약을 하나의 읽기 쉬운 문서로 이동합니다.</p></article>
+        <article class="card"><div class="num">02</div><h3>선택적 연결</h3><p>정적 파일로 끝낼 수도 있고, 원본 에이전트와 연결해 최신 버전을 다시 동기화할 수도 있습니다.</p></article>
+        <article class="card"><div class="num">03</div><h3>지식의 격리</h3><p>RAG, 지식 파일, 자격증명은 이동하지 않습니다. 필요할 때만 원본에 최소 범위로 질의합니다.</p></article>
+      </div>
+      <div class="callout"><strong>한 문장 정의</strong><br>ASXP는 “prompt + tool contract는 복사하고, private knowledge + credential은 원본에 남기는” 에이전트 스킬 교환 프로토콜입니다.</div>
+    </section>
+
+    <section id="model">
+      <div class="eyebrow">Core model</div><h2>하나의 파일, 두 가지 실행 방식</h2>
+      <div class="boundary">
+        <article class="safe"><span class="tag">INLINE</span><h3>가져온 능력을 로컬에서 실행</h3><ul><li>Markdown body를 스킬 지침으로 주입</li><li><code>ae-tools-json</code> 도구를 부모의 tools 배열에 평탄화</li><li>호스트 정책과 사용자 권한 안에서 실행</li><li>원본이 없어도 정적 snapshot으로 동작</li></ul></article>
+        <article class="unsafe"><span class="tag">DELEGATE · OPTIONAL</span><h3>원본 지식이 필요할 때만 위임</h3><ul><li>연결된 스킬에 <code>ask_&lt;safeName&gt;</code> 합성</li><li>원본 RAG나 비공개 데이터는 이동하지 않음</li><li>최소 task context만 전송</li><li>OAuth scope, consent, depth limit 적용</li></ul></article>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="eyebrow">Lifecycle</div><h2>Export에서 Re-sync까지</h2>
+      <div class="flow">
+        <div class="step"><small>STEP 1</small><h3>Export</h3><p>에이전트의 재사용 가능한 prompt와 공개 tool contract를 <code>skill.md</code>로 생성합니다.</p></div><div class="arrow">→</div>
+        <div class="step"><small>STEP 2</small><h3>Validate</h3><p>필수 필드, JSON Schema, URL, 권한, credential 포함 여부를 검사합니다.</p></div><div class="arrow">→</div>
+        <div class="step"><small>STEP 3</small><h3>Import</h3><p>파일 또는 sibling agent에서 가져오고, 충돌 도구는 안전하게 namespace 처리합니다.</p></div><div class="arrow">→</div>
+        <div class="step"><small>STEP 4</small><h3>Run / Sync</h3><p>로컬에서 실행하고, origin이 있으면 immutable revision 기준으로 다시 동기화합니다.</p></div>
+      </div>
+      <h3 style="margin-top:38px">가장 작은 호환 문서</h3>
+      <pre>---
+name: customer-support
+description: 주문 관련 질문을 처리할 때 사용하는 고객지원 스킬.
+asxp-version: 0.1
+version: 1.0.0
+permissions: orders.read
+privacy: local
+ae-tools-json: '[{"name":"lookup_order","description":"주문 조회","inputSchema":{"type":"object","properties":{"order_id":{"type":"string"}},"required":["order_id"]}}]'
+---
+
+# Customer support
+주문 번호가 없으면 먼저 요청하고, 확인되지 않은 배송일은 추측하지 마세요.</pre>
+    </section>
+
+    <section id="runtime">
+      <div class="eyebrow">Runtime</div><h2>실행 중에는 이렇게 결합됩니다</h2>
+      <div class="runtime">
+        <div class="lane"><strong>Instructions</strong><div>활성화된 skill body가 <code>## Available skills</code> 아래의 격리된 지침 영역에 추가됩니다. 호스트 정책보다 높은 권한을 갖지는 않습니다.</div></div>
+        <div class="lane"><strong>Tools</strong><div><code>ae-tools-json</code>의 도구들이 부모 runtime에 노출됩니다. 이름 충돌 시 <code>&lt;skill&gt;__&lt;tool&gt;</code>처럼 결정적으로 namespace 처리합니다.</div></div>
+        <div class="lane"><strong>Delegation</strong><div>origin이 살아 있는 경우에만 로컬 합성 도구를 제공합니다. 이 도구는 exported tool이 아니라 연결 상태에서 만들어지는 runtime binding입니다.</div></div>
+        <div class="lane"><strong>Guardrails</strong><div>idempotency key, trace ID, visited set, recursion depth, request size, privacy scope를 모든 위임 경로에 적용합니다.</div></div>
+      </div>
+    </section>
+
+    <section id="profiles">
+      <div class="eyebrow">Conformance</div><h2>처음부터 모든 기능이 필요하지 않습니다</h2>
+      <p class="section-lead">구현체는 필요한 수준까지만 지원하고 자신이 지원하는 프로필을 선언할 수 있습니다.</p>
+      <table><thead><tr><th>프로필</th><th>지원 범위</th><th>적합한 사용처</th></tr></thead><tbody>
+        <tr><td><strong>Core</strong></td><td><code>skill.md</code> import/export, schema 검증, 인라인 실행</td><td>사내 실험, 정적 공유</td></tr>
+        <tr><td><strong>Linked</strong></td><td>origin, immutable revision, Re-sync</td><td>sibling agent, 팀 단위 배포</td></tr>
+        <tr><td><strong>Delegating</strong></td><td>원본 agent task 위임, consent와 scoped auth</td><td>RAG·사내 데이터 기반 스킬</td></tr>
+        <tr><td><strong>Registry</strong></td><td>publish, resolve, revoke, JWS/JWKS</td><td>파트너 생태계, 공개 마켓</td></tr>
+      </tbody></table>
+    </section>
+
+    <section id="security">
+      <div class="eyebrow">Security boundary</div><h2>무엇을 옮기고, 무엇을 남길 것인가</h2>
+      <div class="boundary">
+        <article class="safe"><h3 class="yes">포함 가능</h3><ul><li>재사용 가능한 agent instruction</li><li>도구 이름과 설명</li><li>JSON Schema 기반 입력·출력 계약</li><li>필요 권한과 privacy 선언</li><li>origin URL, revision, publisher identity</li><li>서명 검증용 key identifier</li></ul></article>
+        <article class="unsafe"><h3 class="no">포함 금지</h3><ul><li>API key, OAuth token, cookie, certificate</li><li>Slack·LINE 등 채널 credential</li><li>원본 RAG 파일, embedding, private index</li><li>대화 기록과 사용자 개인정보</li><li>숨겨진 플랫폼 정책</li><li>내부 전용 endpoint와 구현 secret</li></ul></article>
+      </div>
+      <div class="callout"><strong>서명은 안전성 인증서가 아닙니다.</strong><br>JWS 서명은 발행자 키 보유와 파일 무결성을 증명합니다. 스킬이 유해하지 않다는 의미는 아니므로 importer의 권한 검토와 로컬 정책 적용이 반드시 필요합니다.</div>
+    </section>
+
+    <section id="adopt">
+      <div class="eyebrow">Adoption</div><h2>현실적인 도입 순서</h2>
+      <ol class="roadmap">
+        <li><div><strong>Core부터 배포</strong><br><span class="section-lead">현재 Skills 탭의 Download / Upload에 parser와 validator를 연결합니다.</span></div></li>
+        <li><div><strong>Sibling import를 Linked로 전환</strong><br><span class="section-lead"><code>sourceAgentId</code>를 외부 표현인 origin URI와 immutable revision으로 매핑합니다.</span></div></li>
+        <li><div><strong>권한 차이를 보여주는 Re-sync</strong><br><span class="section-lead">새 tool이나 privacy 범위가 추가되면 자동 활성화하지 않고 사용자 승인을 받습니다.</span></div></li>
+        <li><div><strong>Delegation을 선택적으로 개방</strong><br><span class="section-lead">private knowledge가 필요한 use case부터 OAuth scope와 consent를 적용합니다.</span></div></li>
+        <li><div><strong>Registry와 서명 도입</strong><br><span class="section-lead">파트너 또는 공개 생태계로 확장할 때 publish, resolve, revoke, JWKS를 운영합니다.</span></div></li>
+      </ol>
+    </section>
+
+    <section>
+      <div class="eyebrow">Positioning</div><h2>MCP와 경쟁하지 않고 그 위를 연결합니다</h2>
+      <table><thead><tr><th></th><th>MCP</th><th>ASXP</th></tr></thead><tbody>
+        <tr><td><strong>핵심 질문</strong></td><td>에이전트가 도구와 컨텍스트를 어떻게 호출하는가?</td><td>에이전트의 능력을 어떻게 내보내고 가져오는가?</td></tr>
+        <tr><td><strong>교환 단위</strong></td><td>Tool, Resource, Prompt</td><td>Skill definition, provenance, lifecycle</td></tr>
+        <tr><td><strong>실행</strong></td><td>서버에 연결해 호출</td><td>인라인 실행 + 선택적 원본 위임</td></tr>
+        <tr><td><strong>함께 사용</strong></td><td colspan="2">ASXP tool binding이 MCP server/tool을 가리킬 수 있으므로 상호 보완적입니다.</td></tr>
+      </tbody></table>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap"><strong>Agent Skill Exchange Protocol</strong> · Draft 0.1 · 2026<br>이 문서는 제안된 오픈 프로토콜을 설명하며, 공인 표준화 기구가 채택한 표준임을 의미하지 않습니다.</div></footer>
+</body>
+</html>

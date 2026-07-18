@@ -1,0 +1,200 @@
+openapi: 3.1.0
+info:
+  title: Agent Skill Exchange Protocol API
+  version: 0.1.0
+  description: Registry, synchronization, revocation, and optional delegation API for ASXP.
+servers:
+  - url: https://registry.example.org
+security:
+  - oauth2: []
+paths:
+  /v1/skills:
+    post:
+      operationId: publishSkill
+      summary: Publish an immutable skill release
+      security: [{oauth2: [skill.publish]}]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SignedRelease'}
+      responses:
+        '201':
+          description: Published
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/ReleaseDescriptor'}
+        '409': {description: Revision already exists with different content}
+  /v1/skills/{publisher}/{name}:
+    get:
+      operationId: resolveSkill
+      summary: Resolve a tag or fetch the current immutable release
+      security: []
+      parameters:
+        - {name: publisher, in: path, required: true, schema: {type: string}}
+        - {name: name, in: path, required: true, schema: {type: string}}
+        - {name: version, in: query, schema: {type: string, default: latest}}
+        - {name: If-None-Match, in: header, schema: {type: string}}
+      responses:
+        '200':
+          description: Signed immutable release
+          headers:
+            ETag: {schema: {type: string}}
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SignedRelease'}
+        '304': {description: Installed revision is current}
+        '404': {description: Skill not found}
+        '410':
+          description: Release revoked
+          content:
+            application/problem+json:
+              schema: {$ref: '#/components/schemas/Problem'}
+  /v1/skills/{publisher}/{name}/releases/{revision}/revocation:
+    put:
+      operationId: revokeSkillRelease
+      summary: Revoke an immutable release without deleting its audit record
+      security: [{oauth2: [skill.revoke]}]
+      parameters:
+        - {name: publisher, in: path, required: true, schema: {type: string}}
+        - {name: name, in: path, required: true, schema: {type: string}}
+        - {name: revision, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: {type: string, maxLength: 2048}
+      responses:
+        '204': {description: Revoked}
+  /v1/delegations:
+    post:
+      operationId: createDelegation
+      summary: Ask an origin agent to execute a scoped task
+      security: [{oauth2: [skill.delegate]}]
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DelegationRequest'}
+      responses:
+        '200':
+          description: Completed synchronously
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DelegationResult'}
+        '202':
+          description: Accepted asynchronously
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Operation'}
+  /v1/operations/{operationId}:
+    get:
+      operationId: getOperation
+      security: [{oauth2: [skill.delegate]}]
+      parameters:
+        - {name: operationId, in: path, required: true, schema: {type: string}}
+      responses:
+        '200':
+          description: Operation state
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Operation'}
+  /.well-known/jwks.json:
+    get:
+      operationId: getSigningKeys
+      security: []
+      responses:
+        '200':
+          description: Registry or publisher signing keys
+          content:
+            application/jwk-set+json:
+              schema: {type: object, required: [keys], properties: {keys: {type: array, items: {type: object}}}}
+components:
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, minLength: 16, maxLength: 128}
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.org/oauth/token
+          scopes:
+            skill.publish: Publish releases
+            skill.revoke: Revoke releases
+            skill.delegate: Execute delegated tasks
+  schemas:
+    SignedRelease:
+      type: object
+      required: [manifest, digest, signature]
+      properties:
+        manifest: {$ref: '../schemas/skill-manifest.schema.json'}
+        digest: {type: string, pattern: '^sha256:[a-f0-9]{64}$'}
+        signature: {type: string, description: Detached compact JWS with an empty payload segment}
+    ReleaseDescriptor:
+      type: object
+      required: [id, revision, digest, url]
+      properties:
+        id: {type: string, format: uri}
+        revision: {type: string}
+        digest: {type: string}
+        url: {type: string, format: uri}
+    DelegationRequest:
+      type: object
+      required: [skill, revision, task, traceId, maxDepth, dataClasses]
+      properties:
+        skill: {type: string, format: uri}
+        revision: {type: string}
+        task: {type: string, maxLength: 65536}
+        artifacts:
+          type: array
+          maxItems: 16
+          items:
+            type: object
+            required: [uri, mediaType, digest]
+            properties:
+              uri: {type: string, format: uri}
+              mediaType: {type: string}
+              digest: {type: string}
+        traceId: {type: string}
+        parentTraceId: {type: string}
+        maxDepth: {type: integer, minimum: 0, maximum: 8}
+        visited: {type: array, items: {type: string}, maxItems: 32}
+        dataClasses: {type: array, items: {type: string}, uniqueItems: true}
+        consentToken: {type: string, description: Short-lived audience- and purpose-bound token}
+    DelegationResult:
+      type: object
+      required: [traceId, output]
+      properties:
+        traceId: {type: string}
+        output: {}
+        artifacts: {type: array, items: {type: object}}
+        usage: {type: object, additionalProperties: true}
+    Operation:
+      type: object
+      required: [id, status]
+      properties:
+        id: {type: string}
+        status: {enum: [queued, running, succeeded, failed, cancelled]}
+        result: {$ref: '#/components/schemas/DelegationResult'}
+        error: {$ref: '#/components/schemas/Problem'}
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: {type: string, format: uri-reference}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        traceId: {type: string}

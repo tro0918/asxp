@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://asxp.org/schema/0.1/tool.schema.json",
+  "title": "ASXP Tool",
+  "type": "object",
+  "required": ["name", "description", "inputSchema"],
+  "properties": {
+    "name": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,127}$"},
+    "description": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "inputSchema": {"type": "object"},
+    "outputSchema": {"type": "object"},
+    "kind": {"enum": ["function", "http", "mcp", "booking", "mock"]},
+    "binding": {
+      "type": "object",
+      "properties": {
+        "url": {"type": "string", "format": "uri"},
+        "method": {"enum": ["GET", "POST", "PUT", "PATCH", "DELETE"]},
+        "mcpServer": {"type": "string"},
+        "mcpTool": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "permissions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "additionalProperties": true
+}
