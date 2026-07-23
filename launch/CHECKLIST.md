@@ -10,6 +10,7 @@
 - [ ] Add topics: `agent-skills`, `mcp`, `ai-agents`, `interoperability`, `skill-package`, `agent-protocol`.
 - [ ] Enable Discussions and private vulnerability reporting.
 - [ ] Post `agent-skills-discussion.md` to the Agent Skills community.
+- [ ] Run `bash scripts/publish_outreach.sh` to create the implementer issue and Agent Skills Discussion.
 - [ ] Share `mcp-wg-intro.md` in the Skills Over MCP WG before proposing a SEP.
 - [ ] Publish the Show HN post only after the live demo and CI are green.
 - [ ] Recruit a second independent runtime and publish its TCK result.

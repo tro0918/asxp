@@ -14,5 +14,7 @@ We would value feedback on:
 4. Which two independent clients would be useful for an import/export test.
 
 Repository: https://github.com/tro0918/asxp
+Live explainer: https://tro0918.github.io/asxp/
+Interactive demo: https://tro0918.github.io/asxp/demo/
 
 This is a draft implementation and compatibility experiment, not a claim of an adopted standard.

@@ -11,4 +11,5 @@ Specific feedback requested:
 - Which permission/binding changes should require client re-approval?
 - Would a compatibility adapter against SEP-2640 be useful as an experimental result?
 
-Repository and runnable demo: https://github.com/tro0918/asxp
+Repository: https://github.com/tro0918/asxp
+Runnable demo: https://tro0918.github.io/asxp/demo/
