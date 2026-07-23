@@ -1,5 +1,6 @@
 # Public launch checklist
 
+- [ ] Run `bash scripts/publish_github.sh` from the repository root.
 - [ ] Push commit `d7c52ff` or its descendant to `main`.
 - [ ] Confirm Conformance workflow passes.
 - [ ] Enable GitHub Pages with GitHub Actions as the source if the workflow requests it.
