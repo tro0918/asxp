@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ASXP Agent Lab</title><link rel="stylesheet" href="styles.css">
@@ -7,52 +7,52 @@
 <body>
   <header class="topbar">
     <div class="brand"><span class="logo">AX</span><div><strong>ASXP Agent Lab</strong><small>skill exchange playground</small></div></div>
-    <div class="status"><span class="dot"></span> Local simulation <button id="resetBtn" class="ghost">초기화</button></div>
+    <div class="status"><span class="dot"></span> Local simulation <button id="resetBtn" class="ghost">Reset</button></div>
   </header>
   <main>
     <section class="intro">
-      <div><span class="eyebrow">INTERACTIVE DEMO</span><h1>두 에이전트 사이에서<br>능력을 이동시켜 보세요.</h1><p>Agent A의 환불 정책 스킬을 Export하고 Agent B에 Import하세요. 그다음 같은 질문을 다시 보내면 응답과 도구 사용이 어떻게 달라지는지 확인할 수 있습니다.</p></div>
-      <div class="progress" aria-label="ASXP 교환 단계">
-        <div class="stage active" data-stage="0"><b>1</b><span>준비</span></div><i></i><div class="stage" data-stage="1"><b>2</b><span>Export</span></div><i></i><div class="stage" data-stage="2"><b>3</b><span>Import</span></div><i></i><div class="stage" data-stage="3"><b>4</b><span>활성화</span></div>
+      <div><span class="eyebrow">INTERACTIVE DEMO</span><h1>Move capabilities<br>between two agents.</h1><p>Export Agent A's refund-policy skill and import it into Agent B. Then ask the same question again to see how the response and tool use change.</p></div>
+      <div class="progress" aria-label="ASXP exchange stages">
+        <div class="stage active" data-stage="0"><b>1</b><span>Ready</span></div><i></i><div class="stage" data-stage="1"><b>2</b><span>Export</span></div><i></i><div class="stage" data-stage="2"><b>3</b><span>Import</span></div><i></i><div class="stage" data-stage="3"><b>4</b><span>Activate</span></div>
       </div>
     </section>
 
     <section class="workspace">
       <article class="agent" id="agentA">
-        <header><div class="avatar a">A</div><div><h2>Policy Expert</h2><p>원본 에이전트 · 지식 보유</p></div><span class="badge owner">ORIGIN</span></header>
+        <header><div class="avatar a">A</div><div><h2>Policy Expert</h2><p>Origin agent · owns private knowledge</p></div><span class="badge owner">ORIGIN</span></header>
         <div class="capabilities"><span>refund.lookup</span><span>order.read</span><span class="private">private RAG</span></div>
-        <div class="skill-card"><div><small>OWNED SKILL</small><strong>refund-policy <em>v1.0.0</em></strong><p>환불 가능 여부를 판단하고 주문 상태를 조회합니다.</p></div><button id="exportBtn" class="primary">.asxp Export</button></div>
-        <div class="chat" id="chatA"><div class="message agent-msg"><span>Policy Expert</span>안녕하세요. 환불 정책과 주문 상태를 확인할 수 있어요.</div></div>
-        <form class="composer" data-agent="A"><input aria-label="Agent A 메시지" placeholder="Agent A에게 질문하기"><button>전송</button></form>
+        <div class="skill-card"><div><small>OWNED SKILL</small><strong>refund-policy <em>v1.0.0</em></strong><p>Evaluates refund eligibility and looks up order status.</p></div><button id="exportBtn" class="primary">Export .asxp</button></div>
+        <div class="chat" id="chatA"><div class="message agent-msg"><span>Policy Expert</span>Hello! I can check refund policy and order status.</div></div>
+        <form class="composer" data-agent="A"><input aria-label="Message Agent A" placeholder="Ask Agent A"><button>Send</button></form>
       </article>
 
       <div class="exchange">
         <div class="packet" id="packet"><span>PACKAGE</span><b>.asxp</b><small id="packetState">not exported</small></div>
         <div class="exchange-line"><i></i><b>→</b></div>
-        <button id="inspectBtn" class="ghost" disabled>파일 보기</button>
+        <button id="inspectBtn" class="ghost" disabled>View package</button>
       </div>
 
       <article class="agent" id="agentB">
-        <header><div class="avatar b">B</div><div><h2>Ops Assistant</h2><p>수신 에이전트 · 범용 운영</p></div><span class="badge receiver">HOST</span></header>
+        <header><div class="avatar b">B</div><div><h2>Ops Assistant</h2><p>Receiving agent · general operations</p></div><span class="badge receiver">HOST</span></header>
         <div class="capabilities" id="capsB"><span>ticket.create</span><span>customer.search</span></div>
-        <div class="dropzone" id="dropzone"><div><small>IMPORTED SKILLS</small><strong id="skillStatus">아직 가져온 스킬이 없습니다</strong><p id="skillDetail">Export 후 Import를 눌러 능력을 전달하세요.</p></div><button id="importBtn" disabled>Import</button><button id="activateBtn" class="primary hidden">활성화</button><button id="syncBtn" class="hidden">Re-sync</button></div>
-        <div class="chat" id="chatB"><div class="message agent-msg"><span>Ops Assistant</span>안녕하세요. 고객 운영 업무를 도와드릴게요.</div></div>
-        <form class="composer" data-agent="B"><input aria-label="Agent B 메시지" placeholder="Agent B에게 질문하기"><button>전송</button></form>
+        <div class="dropzone" id="dropzone"><div><small>IMPORTED SKILLS</small><strong id="skillStatus">No skills imported yet</strong><p id="skillDetail">Export the skill, then import it to transfer the capability.</p></div><button id="importBtn" disabled>Import</button><button id="activateBtn" class="primary hidden">Activate</button><button id="syncBtn" class="hidden">Re-sync</button></div>
+        <div class="chat" id="chatB"><div class="message agent-msg"><span>Ops Assistant</span>Hello! I can help with customer operations.</div></div>
+        <form class="composer" data-agent="B"><input aria-label="Message Agent B" placeholder="Ask Agent B"><button>Send</button></form>
       </article>
     </section>
 
     <section class="testbench">
-      <div><span class="eyebrow">TEST SCENARIO</span><h2>같은 질문으로 전후를 비교하세요</h2><p>먼저 Agent B에게 질문한 뒤 스킬을 교환하고 다시 질문해 보세요.</p></div>
-      <div class="prompts"><button data-prompt="주문 ORD-2048을 어제 받았는데 포장을 열었어요. 환불 가능할까요?">환불 가능 여부 확인</button><button data-prompt="ORD-2048의 환불 기한과 수수료를 알려줘">환불 기한·수수료</button><button data-prompt="원본 약관 12조의 예외 조건까지 확인해줘">원본 RAG가 필요한 질문</button></div>
+      <div><span class="eyebrow">TEST SCENARIO</span><h2>Compare before and after with the same question</h2><p>Ask Agent B first, exchange the skill, then ask again.</p></div>
+      <div class="prompts"><button data-prompt="I received order ORD-2048 yesterday and opened the package. Can I get a refund?">Check refund eligibility</button><button data-prompt="What are the refund deadline and fee for ORD-2048?">Refund deadline and fee</button><button data-prompt="Check the exceptions in Section 12 of the original policy">Question requiring origin RAG</button></div>
     </section>
 
     <section class="observability">
-      <div class="panel"><header><div><span class="eyebrow">RUNTIME</span><h2>Agent B 실행 컨텍스트</h2></div><span id="runtimeBadge" class="badge">BASE</span></header><div id="runtime"><div class="empty">스킬을 활성화하면 instructions와 tools가 여기에 합성됩니다.</div></div></div>
-      <div class="panel"><header><div><span class="eyebrow">TRACE</span><h2>프로토콜 이벤트</h2></div><button id="clearLog" class="ghost">지우기</button></header><div class="logs" id="logs"></div></div>
+      <div class="panel"><header><div><span class="eyebrow">RUNTIME</span><h2>Agent B execution context</h2></div><span id="runtimeBadge" class="badge">BASE</span></header><div id="runtime"><div class="empty">Activate the skill to inject its instructions and tools here.</div></div></div>
+      <div class="panel"><header><div><span class="eyebrow">TRACE</span><h2>Protocol events</h2></div><button id="clearLog" class="ghost">Clear</button></header><div class="logs" id="logs"></div></div>
     </section>
   </main>
 
-  <dialog id="skillDialog"><header><div><span class="eyebrow">PORTABLE PACKAGE</span><h2>SKILL.md + asxp.json</h2></div><button id="closeDialog" class="icon">×</button></header><pre id="skillText"></pre><footer><button id="copyBtn">내용 복사</button><button id="downloadBtn" class="primary">Download preview</button></footer></dialog>
+  <dialog id="skillDialog"><header><div><span class="eyebrow">PORTABLE PACKAGE</span><h2>SKILL.md + asxp.json</h2></div><button id="closeDialog" class="icon">×</button></header><pre id="skillText"></pre><footer><button id="copyBtn">Copy contents</button><button id="downloadBtn" class="primary">Download preview</button></footer></dialog>
   <div id="toast" role="status"></div>
   <script src="app.js"></script>
 </body>
